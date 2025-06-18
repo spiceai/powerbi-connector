@@ -1,0 +1,55 @@
+---
+name: integration tests
+
+on:
+  push:
+    branches:
+      - trunk
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - trunk
+    paths-ignore:
+      - '**/*.md'
+
+  workflow_dispatch:
+
+jobs:
+  integration:
+    name: Run Integration Tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Power Query Sdk Tools
+        run: |
+          New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.vscode\extensions"
+          nuget install Microsoft.PowerQuery.SdkTools -OutputDirectory "$env:USERPROFILE\.vscode\extensions"
+
+      - name: Install Spice
+        run: |
+          iex ((New-Object System.Net.WebClient).DownloadString("https://install.spiceai.org/Install.ps1"))
+          Add-Content $env:GITHUB_PATH (Join-Path $HOME ".spice\bin")
+
+      - name: Start Spice test server
+        shell: bash
+        working-directory: ./test
+        run: |
+          spice run > spice.log 2>&1 &
+          # time to initialize datasets
+          sleep 10
+
+      - name: Run tests
+        run: |
+          make test > pqtest_output.txt 2>&1
+          cat pqtest_output.txt
+          grep -q '"Status": "Passed"' pqtest_output.txt || { echo "❌ failed"; exit 1; }
+
+      - name: Stop Spice and print logs
+        working-directory: ./test
+        if: always()
+        run: |
+          Get-Process spice -ErrorAction SilentlyContinue | Stop-Process -Force
+          if (Test-Path spice.log) { Get-Content spice.log } else { echo "spice.log not found." }

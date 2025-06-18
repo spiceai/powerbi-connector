@@ -1,0 +1,42 @@
+version: v1
+kind: Spicepod
+name: test-data
+
+datasets:
+  - from: file:./data/nyc_taxi_tripdata.parquet
+    name: nyc_taxi_tripdata
+    acceleration: 
+      enabled: true
+
+  - from: file:./data/taxi_zone_lookup.parquet
+    name: taxi_zone_lookup_temp
+    acceleration: 
+      enabled: true
+
+views:
+  # View is used to convert LargeUtf8 to Utf8 as LargeUtf8 is not curently supported by ADBC driver
+  - name: taxi_zone_lookup
+    sql: |
+      SELECT
+        LocationID as LocationID,
+        Borough::TEXT as Borough,
+        Zone::TEXT as Zone,
+        service_zone::TEXT as service_zone
+      FROM taxi_zone_lookup_temp;
+
+  - name: types_support
+    acceleration: 
+      enabled: true
+    sql: |
+      SELECT
+         TRUE AS col_boolean,
+         32767::SMALLINT AS col_int16,
+         2147483647::INTEGER AS col_int32,
+         922337203685477::BIGINT AS col_int64,
+         3.14::REAL AS col_float32,
+         3.141592653589793::DOUBLE AS col_float64,
+         '12345.67'::NUMERIC(10,2) AS col_decimal,
+          'Hello, Arrow!'::TEXT AS col_utf8,
+         '2024-09-10'::DATE AS col_date32,
+         '2024-09-10 12:34:56'::TIMESTAMP AS col_timestamp
+       FROM nyc_taxi_tripdata limit 10;
