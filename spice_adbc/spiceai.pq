@@ -1,11 +1,11 @@
 [Version = "0.1.0"]
 section spiceai;
 
-// Connector version for Spice.ai Self-Hosted instance.
+// Connector version for Spice.ai Enterprise.
 [DataSource.Kind = "Spice", Publish = "Spice.Publish"]
 shared Spice.Databases = Value.ReplaceType(SpiceConnectionImpl, SpiceOSSConnectionProps);
 
-// Cloud Platform Connector is a simplified version of the self-hosted OSS version with predefined settings.
+// Cloud Platform Connector is a simplified version of the Spice.ai Enterprise version with predefined settings.
 [DataSource.Kind = "SpiceCloud", Publish = "SpiceCloud.Publish"]
 shared SpiceCloud.Databases = () as table => SpiceConnectionImpl("flight.spiceai.io:443", "Enabled");
 
@@ -31,7 +31,7 @@ SpiceOSSConnectionProps =
             2
         ),
         WithDocumentation = Value.ReplaceMetadata(FunctionType, [
-            Documentation.Name = "Spice.ai Self-Hosted"
+            Documentation.Name = "Spice.ai Enterprise"
         ])
     in
         WithDocumentation;

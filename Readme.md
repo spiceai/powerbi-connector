@@ -1,10 +1,10 @@
 # Spice.ai Power BI Connector
 
-The Spice.ai Power BI Connector is a [ADBC](https://github.com/apache/arrow-adbc)-based connector that enables Power BI users to easily connect to and visualize data from self-hosted Spice.ai Open Source and Spice Cloud Platform instances.
+The Spice.ai Power BI Connector is a [ADBC](https://github.com/apache/arrow-adbc)-based connector that enables Power BI users to easily connect to and visualize data from Spice.ai Enterprise and Spice Cloud Platform instances.
 
 ## Features
 
-- Connect Power BI to Spice data sources: [Spice Cloud Platform](https://spice.ai/), self-hosted [Spice.ai OSS](https://spiceai.org/)
+- Connect Power BI to Spice data sources: [Spice Cloud Platform](https://spice.ai/) and [Spice.ai Enterprise](https://spiceai.org/)
 - API key authentication
 - TLS encryption for secure connections
 

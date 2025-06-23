@@ -118,17 +118,17 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ButtonHelp" xml:space="preserve">
-    <value>Connect to Spice.ai self-hosted server</value>
+    <value>Connect to Spice.ai Enterprise</value>
   </data>
   <data name="ButtonTitle" xml:space="preserve">
-    <value>Spice.ai Self-Hosted</value>
+    <value>Spice.ai Enterprise</value>
     <comment>This is the name of the connector as it shows up in Power BI's Get Data dialog.</comment>
   </data>
   <data name="CloudButtonHelp" xml:space="preserve">
-    <value>Connect to Spice.ai Cloud Platform</value>
+    <value>Connect to Spice Cloud Platform</value>
   </data>
   <data name="CloudButtonTitle" xml:space="preserve">
-    <value>Spice.ai Cloud Platform</value>
+    <value>Spice Cloud Platform</value>
     <comment>This is the name of the connector as it shows up in Power BI's Get Data dialog.</comment>
   </data>
   <data name="TLSCaption" xml:space="preserve">
