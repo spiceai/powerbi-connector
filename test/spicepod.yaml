@@ -14,7 +14,7 @@ datasets:
       enabled: true
 
 views:
-  # View is used to convert LargeUtf8 to Utf8 as LargeUtf8 is not curently supported by ADBC driver
+  # View is used to convert LargeUtf8 to Utf8 as LargeUtf8 is not currently supported by ADBC driver
   - name: taxi_zone_lookup
     sql: |
       SELECT
