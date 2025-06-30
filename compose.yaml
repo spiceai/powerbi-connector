@@ -1,0 +1,17 @@
+services:
+  spiceai:
+    container_name: spiceai-pbi-test-server
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: ci/docker/spiceai-init.dockerfile
+      platforms:
+        - linux/amd64
+    healthcheck:
+      test: ['CMD', 'curl', '--fail', 'http://localhost:8090/v1/ready']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - '50051:50051'
+      - '8090:8090'
