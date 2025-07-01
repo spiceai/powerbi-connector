@@ -212,7 +212,7 @@ let
 
 // This is helper function which is used in dates override function. Please see below for usage
 
-    GetListCount = (listvalue) => List.Count(listvalue),   
+    GetListCount = (listvalue) => if listvalue = null then 0 else List.Count(listvalue),   
     GetListContains = (listvalue,value) => List.Contains(listvalue,value),
     DateStartOfHelper = (args,visitor,datetimepart) =>                                                       
         let 
@@ -332,31 +332,20 @@ let
                 result
         else ...,
     
-    ListCountHelper = (visitor, ast) => 
+    ListCountHelper = (visitor, ast) =>
         let
             foldedArg = visitor(ast[Arguments]{0}),
             arg = GetArgumentForListCount(ast,visitor,true),
             withCount = InvocationWithType(arg[ArgumentAst], "Count",integerTypeWithFacets)
         in 
-            if arg[CountNull] = true
-            then 
-                let 
-                    whencondition = BinaryLogicalOperation("Equals",arg[ColumnAst],Literal("null")),
-                    whenItem =WhenItem(whencondition,one,Number.Type),
-                    case = CaseFunction({whenItem},zero,null,Number.Type),
-                    max = InvocationWithType({Argument(case,integerTypeWithFacets)},"max",integerTypeWithFacets),
-                    result = BinaryOperation(withCount,"Add",max)
-                in 
-                    result
-            else 
-                withCount,
+            withCount,
 
 //NativeTypesWithFacets ---This is specific to data connector
     textTypeWithFacets = Type.ReplaceFacets(Text.Type, [NativeTypeName = "VARCHAR"]),
     doubleTypeWithFacets = Type.ReplaceFacets(Double.Type, [NativeTypeName = "DOUBLE"]),
     decimalTypeWithFacets = Type.ReplaceFacets(Decimal.Type, [NativeTypeName = "DECIMAL"]),
     decimalTypeWithPrecision = Type.ReplaceFacets(Decimal.Type, [NativeTypeName = "DECIMAL", NumericPrecisionBase = 10, NumericPrecision = 38, NumericScale = 6]),
-    integerTypeWithFacets = Type.ReplaceFacets(Int32.Type, [NativeTypeName = "INTEGER"]),
+    integerTypeWithFacets = Type.ReplaceFacets(Number.Type, [NativeTypeName = "INTEGER"]),
     datetypewithFacets = Type.ReplaceFacets(Date.Type, [NativeTypeName = "DATE"]),
     datetimeTypeWithFacets = Type.ReplaceFacets(DateTime.Type, [NativeTypeName = "TIMESTAMP"]),
     timeTypeWithFacets = Type.ReplaceFacets(Time.Type, [NativeTypeName = "TIME"]),
