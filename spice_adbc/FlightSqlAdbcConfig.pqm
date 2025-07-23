@@ -5,7 +5,7 @@ let
         Folder = "FlightSQL",
         File = "libadbc_driver_flightsql.dll",
         DriverType = "Unmanaged",
-        EntryPoint = "FlightSQLDriverInit",
+        EntryPoint = "FlightSqlDriverInit",
         IdentifierQuoteChar = """",
         CatalogNameSeparator = ".",
         TableTypes = "BASE TABLE",
