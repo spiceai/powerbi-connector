@@ -1,4 +1,4 @@
-FROM spiceai/spiceai:1.5.0-rc.1 AS spiceai
+FROM spiceai/spiceai:latest-models AS spiceai
 
 FROM debian:bookworm-slim
 
