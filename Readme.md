@@ -37,7 +37,7 @@ The following Apache Arrow / DataFusion SQL types are supported. Other types wil
 | Float32                                                       | REAL                | Single             |
 | Float64                                                       | DOUBLE              | Double             |
 | Decimal128 / Decimal256                                       | DECIMAL             | Decimal            |
-| Utf8 / LargeUtf8 / Utf8View                                   | VARCHAR             | Text               |
+| Utf8                                                          | VARCHAR             | Text               |
 | Date32 / Date64                                               | DATE                | Date               |
 | Time32 / Time64                                               | TIME                | Time               |
 | Timestamp                                                     | TIMESTAMP           | DateTime           |

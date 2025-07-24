@@ -28,12 +28,12 @@ SpiceConnectionProps =
                     [
                         Description = "Connect to Spice Cloud",
                         Code = "Spice.Databases(""grpc+tls://flight.spiceai.io:443"")",
-                        Result = "Returns Spice database entry"
+                        Result = "Returns a Spice database connection entry"
                     ],
                     [
                         Description = "Connect to local instance",
                         Code = "Spice.Databases(""grpc://localhost:50051"")",
-                        Result = "Returns Spice database entry"
+                        Result = "Returns a Spice database connection entry"
                     ]
                 }
             ]
