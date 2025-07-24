@@ -3,8 +3,9 @@ section spiceai;
 // Integration tests for Spice connector
 shared Spice.IntegrationTests = [
     conn = Spice.Databases("127.0.0.1:50051"),
-    database = conn{[Name = "spice", Kind = "Database"]}[Data],
-    testTable = database{[Name = "types_support", Kind = "Table"]}[Data],
+    spiceDB      = conn{[Name="spice", Kind="Database"]}[Data],	
+    publicSchema = spiceDB{[Name="public", Kind="Schema"]}[Data],	
+    testTable    = publicSchema{[Name="types_support", Kind="Table"]}[Data],
     // Test: Take first row
     FirstN_Test = Table.FirstN(testTable, 1),
     // Test: Filter
@@ -39,7 +40,7 @@ shared Spice.IntegrationTests = [
     ),
     // Test: Native query with folding enabled
     NativeQuery_Test = Value.NativeQuery(
-        database,
+        spiceDB,
         "select * from types_support where col_int32 > 0 order by col_boolean desc limit 3",
         null,
         [
