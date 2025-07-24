@@ -47,6 +47,10 @@ jobs:
           cat pqtest_output.txt
           grep -q '"Status": "Passed"' pqtest_output.txt || { echo "❌ failed"; exit 1; }
 
+      - name: Run Power Query SDK Test Suite
+        run: |
+          make test-suite
+
       - name: Stop Spice and print logs
         working-directory: ./test
         if: always()

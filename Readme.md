@@ -99,7 +99,7 @@ make build
     spice run
     ```
 
-2. Run smokes tests:
+2. Run smoke tests:
 
     ```bash
     make test
