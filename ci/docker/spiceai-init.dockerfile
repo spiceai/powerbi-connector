@@ -1,7 +1,4 @@
-# Nightly image is temporarily used to include FlightSQL schema fix until this is included in the next official release 1.5.0
-
-#FROM spiceai/spiceai:latest-models
-FROM ghcr.io/spiceai/spiceai-nightly:20250611-cd21f4a-models AS spiceai
+FROM spiceai/spiceai:latest-models AS spiceai
 
 FROM debian:bookworm-slim
 
