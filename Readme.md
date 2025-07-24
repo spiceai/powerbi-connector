@@ -90,7 +90,7 @@ make tools
 make build
 ```
 
-### Run Smoke Tests
+### Run Tests
 
 1. In a separate terminal, run the test Spice instance:
 
@@ -99,11 +99,17 @@ make build
     spice run
     ```
 
-2. Run the tests:
+2. Run smokes tests:
 
     ```bash
     make test
     ```
+
+3. Run the [Power Query SDK Test Suite](https://github.com/microsoft/DataConnectors/blob/master/testframework/tests/PQSDKTestSuites.md):
+
+```bash
+make test-suite
+```
 
 ## License
 
