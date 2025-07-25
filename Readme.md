@@ -35,7 +35,7 @@ The Spice.ai Power BI Connector is a [ADBC](https://github.com/apache/arrow-adbc
     - For on-premises/self-hosted Spice.ai:
         - Without TLS (default): `grpc://<server-ip>:50051`
         - With TLS: `grpc+tls://<server-ip>:50051`
-6. Select the Data Connectivity mode:
+6. Select the `Data Connectivity` mode:
     - **Import**: Data is loaded into Power BI, enabling extensive functionality but requiring periodic refreshes and sufficient local memory to accommodate the dataset.
     - **DirectQuery**: Queries are executed directly against Spice in real-time, providing fast performance even on large datasets by leveraging Spice's optimized query engine.
 7. Click `OK`.
