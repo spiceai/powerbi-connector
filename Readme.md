@@ -39,7 +39,7 @@ The Spice.ai Power BI Connector is a [ADBC](https://github.com/apache/arrow-adbc
     - **Import**: Data is loaded into Power BI, enabling extensive functionality but requiring periodic refreshes and sufficient local memory to accommodate the dataset.
     - **DirectQuery**: Queries are executed directly against Spice in real-time, providing fast performance even on large datasets by leveraging Spice's optimized query engine.
 7. Click `OK`.
-8. Select Authentication option:
+8. Select `Authentication` option:
     - **Anonymous**: Select for unauthenticated on-premises deployments.
     - **API Key**: Your Spice.ai API key for authentication (required for Spice Cloud). Follow the [guide](https://docs.spice.ai/portal/apps/api-keys) to obtain it from the Spice Cloud portal.
 9. Click `Connect` to establish the connection.
