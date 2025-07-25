@@ -1,0 +1,31 @@
+name: release
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Power Query Sdk Tools
+        run: |
+          New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.vscode\extensions"
+          nuget install Microsoft.PowerQuery.SdkTools -OutputDirectory "$env:USERPROFILE\.vscode\extensions"
+
+      - name: Build connector
+        run: |
+          make build
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          prerelease: true
+          fail_on_unmatched_files: true
+          files: ./spice_adbc/bin/AnyCPU/Debug/spice_adbc.mez
