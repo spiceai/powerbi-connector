@@ -1,38 +1,43 @@
 [Version = "0.1.0"]
 section spiceai;
 
-// Connector version for Spice.ai Enterprise.
 [DataSource.Kind = "Spice", Publish = "Spice.Publish"]
-shared Spice.Databases = Value.ReplaceType(SpiceConnectionImpl, SpiceOSSConnectionProps);
+shared Spice.Databases = Value.ReplaceType(SpiceConnectionImpl, SpiceConnectionProps);
 
-// Cloud Platform Connector is a simplified version of the Spice.ai Enterprise version with predefined settings.
-[DataSource.Kind = "SpiceCloud", Publish = "SpiceCloud.Publish"]
-shared SpiceCloud.Databases = () as table => SpiceConnectionImpl("flight.spiceai.io:443", "Enabled");
-
-SpiceOSSConnectionProps =
+SpiceConnectionProps =
     let
         FunctionType = Type.ForFunction(
             [
                 Parameters = [
-                    server = (type text) meta [
-                        Documentation.FieldCaption = "Server",
-                        Documentation.FieldDescription = "Arrow Flight Endpoint of Spice.ai Server",
-                        Documentation.SampleValues = {"127.0.0.1:50051"}
-                    ],
-                    encryption = (type text) meta [
-                        Documentation.FieldCaption = Extension.LoadString("TLSCaption"),
-                        Documentation.AllowedValues = {"Disabled", "Enabled"},
-                        Documentation.FieldDescription = Extension.LoadString("TLSParameterDescription"),
-                        Documentation.SampleValues = {"Disabled"}
+                    endpoint = (type text) meta [
+                        Documentation.FieldCaption = Extension.LoadString("EndpointFieldCaption"),
+                        Documentation.FieldDescription = Extension.LoadString("EndpointFieldDescription"),
+                        Documentation.SampleValues = {"grpc+tls://flight.spiceai.io:443", "grpc://localhost:50051"}
                     ]
                 ],
                 ReturnType = type table
             ],
-            2
+            1
         ),
-        WithDocumentation = Value.ReplaceMetadata(FunctionType, [
-            Documentation.Name = "Spice.ai Enterprise"
-        ])
+        WithDocumentation = Value.ReplaceMetadata(
+            FunctionType,
+            [
+                Documentation.Name = Extension.LoadString("ConnectionName"),
+                Documentation.LongDescription = Extension.LoadString("ConnectionLongDescription"),
+                Documentation.Examples = {
+                    [
+                        Description = "Connect to Spice Cloud",
+                        Code = "Spice.Databases(""grpc+tls://flight.spiceai.io:443"")",
+                        Result = "Returns a Spice database connection entry"
+                    ],
+                    [
+                        Description = "Connect to local instance",
+                        Code = "Spice.Databases(""grpc://localhost:50051"")",
+                        Result = "Returns a Spice database connection entry"
+                    ]
+                }
+            ]
+        )
     in
         WithDocumentation;
 
@@ -40,24 +45,13 @@ Spice = [
     Type = "Custom",
     Authentication = [
         Key = [
-            Label = "API Key",
-            KeyLabel = "API Key"
+            Label = Extension.LoadString("ApiKeyLabel"),
+            KeyLabel = Extension.LoadString("ApiKeyDescription")
         ],
         Anonymous = []
     ],
-    MakeResourcePath = (server, optional encryption) =>
-        if encryption <> null then
-            server & ";" & encryption
-        else
-            server,
-    ParseResourcePath = (resourcePath as text) =>
-    let
-        values = Text.Split(resourcePath, ";"),
-        // Try to get the encryption field, or null if not present
-        encryptionRaw = if List.Count(values) > 1 then Text.Trim(values{1}) else null,
-        encryption = if Text.Upper(encryptionRaw) = "ENABLED" then "Enabled" else "Disabled"
-    in
-        { values{0}, encryption },
+    MakeResourcePath = (endpoint) => NormalizeEndpoint(endpoint)[Normalized],
+    ParseResourcePath = (resourcePath as text) => let endpoint = resourcePath in {endpoint},
     TestConnection = (resourcePath as text) => {"Spice.Databases"} & ParseResourcePath(resourcePath),
     Icons = Spice.Icons
 ];
@@ -79,35 +73,6 @@ Spice.Publish = [
 
 Spice.Icons = Icons;
 
-SpiceCloud = [
-    Type = "Custom",
-    Authentication = [
-        Key = [
-            Label = "API Key",
-            KeyLabel = "API Key"
-        ]
-    ],
-    MakeResourcePath = () => "SpiceCloudPlatform",
-    ParseResourcePath = (resourcePath as text) => {},
-    TestConnection = () => {"SpiceCloud.Databases"},
-    Icons = Spice.Icons
-];
-
-SpiceCloud.Publish = [
-    Beta = true,
-    Category = "Database",
-    SupportsDirectQuery = true,
-    NativeQueryProperties = [
-        navigationSteps = {[]},
-        nativeQueryOptions = [
-            EnableFolding = true
-        ]
-    ],
-    ButtonText = {Extension.LoadString("CloudButtonTitle"), Extension.LoadString("CloudButtonHelp")},
-    SourceImage = Spice.Icons,
-    SourceTypeImage = Spice.Icons
-];
-
 GetConnectionString =
     let
         Credential = Extension.CurrentCredential()
@@ -117,23 +82,77 @@ GetConnectionString =
         else
             [];
 
+IsKeyAuth = () as logical => let Credential = Extension.CurrentCredential() in Credential[AuthenticationKind]? = "Key";
+
 SpiceSqlGenerator = Extension.LoadExpression("SqlGenerator.pqm");
 FlightSqlAdbcConfig = Extension.LoadExpression("FlightSqlAdbcConfig.pqm");
 
-SpiceConnectionImpl = (server as text, encryption as text) as table =>
+SpiceConnectionImpl = (endpoint as text) as table =>
     let
-        UriSchema = if Text.Upper(encryption) = "ENABLED" then "grpc+tls" else "grpc+tcp",
-        ConnectionString = [Uri = UriSchema & "://" & server],
-        Databases = Adbc.DataSource(
-            FlightSqlAdbcConfig,
-            ConnectionString,
-            [
-                SqlGenerator = SpiceSqlGenerator,
-                CredentialConnectionString = GetConnectionString
-            ]
-        )
+        parsed = NormalizeEndpoint(endpoint),
+        isCloud = parsed[IsCloud],
+        ConnectionString = [Uri = parsed[Normalized]],
+        credential = Extension.CurrentCredential(),
+        authKind = credential[AuthenticationKind]?,
+        result =
+            if isCloud and not IsKeyAuth() then
+                error Error.Record("Expression.Error", Extension.LoadString("CloudAuthError"), [
+                    Endpoint = endpoint
+                ])
+            else
+                Adbc.DataSource(
+                    FlightSqlAdbcConfig,
+                    ConnectionString,
+                    [
+                        SqlGenerator = SpiceSqlGenerator,
+                        CredentialConnectionString = GetConnectionString
+                    ]
+                )
     in
-        Databases;
+        Diagnostics.Trace(
+            TraceLevel.Information,
+            [
+                Name = "Spice/Connection",
+                Data = [],
+                SafeData = [
+                    Endpoint = endpoint,
+                    NormalizedEndpoint = parsed[Normalized],
+                    AuthenticationKind = authKind,
+                    IsCloud = isCloud
+                ]
+            ],
+            result
+        );
+
+NormalizeEndpoint = (endpoint as text) as record =>
+    let
+        endpoint = Text.Trim(endpoint),
+        // Split schema if present
+        parts = Text.Split(endpoint, "://"),
+        hasSchema = List.Count(parts) = 2,
+        schema = if hasSchema then Text.Lower(parts{0}) else null,
+        host = if hasSchema then parts{1} else parts{0},
+        // Split host and port if present
+        hostParts = Text.Split(host, ":"),
+        server = hostParts{0},
+        port = if List.Count(hostParts) = 2 then Number.FromText(hostParts{1}) else null,
+        // Determine default schema and port
+        isCloud = Text.EndsWith(Text.Lower(server), ".spiceai.io"),
+        finalSchema = if schema <> null then schema else if isCloud then "grpc+tls" else "grpc",
+        finalPort = if port <> null then port else if isCloud then 443 else 50051,
+        normalized = finalSchema & "://" & server & ":" & Text.From(finalPort)
+    in
+        if not List.Contains({"grpc+tls", "grpc", "grpc+tcp"}, finalSchema) then
+            error
+                Error.Record(
+                    "Expression.Error",
+                    Text.Replace(Extension.LoadString("UnsupportedSchemaError"), "{SCHEMA}", finalSchema),
+                    [
+                        Schema = finalSchema
+                    ]
+                )
+        else
+            [Schema = finalSchema, Server = server, Port = finalPort, IsCloud = isCloud, Normalized = normalized];
 
 Icons = [
     Icon16 = {

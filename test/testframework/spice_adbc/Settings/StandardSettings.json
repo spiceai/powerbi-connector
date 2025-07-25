@@ -1,0 +1,5 @@
+{
+    "FailOnMissingOutputFile":  false,
+    "QueryFilePath":  "TestSuites/Standard",
+    "ParameterQueryFilePath":  "connectorconfigs/spice_adbc/parameterqueries/spice_adbc.parameterquery.pq"
+}

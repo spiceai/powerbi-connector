@@ -47,6 +47,18 @@ jobs:
           cat pqtest_output.txt
           grep -q '"Status": "Passed"' pqtest_output.txt || { echo "❌ failed"; exit 1; }
 
+      - name: Run Power Query SDK Test Suite
+        run: |
+          make test-suite
+
+      - name: Upload connector binary
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: spice_adbc.mez
+          path: ./spice_adbc/bin/AnyCPU/Debug/spice_adbc.mez
+          retention-days: 30
+
       - name: Stop Spice and print logs
         working-directory: ./test
         if: always()

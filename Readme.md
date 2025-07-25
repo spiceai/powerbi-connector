@@ -37,7 +37,7 @@ The following Apache Arrow / DataFusion SQL types are supported. Other types wil
 | Float32                                                       | REAL                | Single             |
 | Float64                                                       | DOUBLE              | Double             |
 | Decimal128 / Decimal256                                       | DECIMAL             | Decimal            |
-| Utf8 / LargeUtf8 / Utf8View                                   | VARCHAR             | Text               |
+| Utf8                                                          | VARCHAR             | Text               |
 | Date32 / Date64                                               | DATE                | Date               |
 | Time32 / Time64                                               | TIME                | Time               |
 | Timestamp                                                     | TIMESTAMP           | DateTime           |
@@ -90,7 +90,7 @@ make tools
 make build
 ```
 
-### Run Smoke Tests
+### Run Tests
 
 1. In a separate terminal, run the test Spice instance:
 
@@ -99,11 +99,17 @@ make build
     spice run
     ```
 
-2. Run the tests:
+2. Run smoke tests:
 
     ```bash
     make test
     ```
+
+3. Run the [Power Query SDK Test Suite](https://github.com/microsoft/DataConnectors/blob/master/testframework/tests/PQSDKTestSuites.md):
+
+```bash
+make test-suite
+```
 
 ## License
 
