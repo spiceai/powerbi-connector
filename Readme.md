@@ -27,6 +27,9 @@ The Spice.ai Power BI Connector is a [ADBC](https://github.com/apache/arrow-adbc
 1. Open Power BI Desktop.
 2. Click on `Get Data` → `More...`.
 3. In the dialog, select `Spice.ai` connector.
+
+   <img width="748" alt="Spice.ai connector" src="https://github.com/user-attachments/assets/d589cfce-25c3-4697-9a7c-e63a130acd53" />
+
 4. Click `Connect`.
 5. Enter the **ADBC (Arrow Flight SQL) Endpoint**:
     - For Spice Cloud Platform:  
@@ -35,6 +38,9 @@ The Spice.ai Power BI Connector is a [ADBC](https://github.com/apache/arrow-adbc
     - For on-premises/self-hosted Spice.ai:
         - Without TLS (default): `grpc://<server-ip>:50051`
         - With TLS: `grpc+tls://<server-ip>:50051`
+
+<img width="748" alt="Spice.ai Connection Dialog" src="https://github.com/user-attachments/assets/e8365aa3-68f1-4746-916c-d0a82e80a627" />
+
 6. Select the `Data Connectivity` mode:
     - **Import**: Data is loaded into Power BI, enabling extensive functionality but requiring periodic refreshes and sufficient local memory to accommodate the dataset.
     - **DirectQuery**: Queries are executed directly against Spice in real-time, providing fast performance even on large datasets by leveraging Spice's optimized query engine.
@@ -42,6 +48,9 @@ The Spice.ai Power BI Connector is a [ADBC](https://github.com/apache/arrow-adbc
 8. Select `Authentication` option:
     - **Anonymous**: Select for unauthenticated on-premises deployments.
     - **API Key**: Your Spice.ai API key for authentication (required for Spice Cloud). Follow the [guide](https://docs.spice.ai/portal/apps/api-keys) to obtain it from the Spice Cloud portal.
+  
+<img width="748" alt="Spice.ai Authentication" src="https://github.com/user-attachments/assets/76c550fd-489f-474c-aa50-311371ecdf5b" />
+
 9. Click `Connect` to establish the connection.
 
 ### Creating Test Instance
@@ -123,9 +132,7 @@ Optional: To create a test Spice instance for use with the Power BI connector, f
 1. Obtain API Key: [guide](https://docs.spice.ai/portal/apps/api-keys)
 1. Once configured, `grpc+tls://flight.spiceai.io:443` can be used as the `ADBC (Arrow Flight SQL) Endpoint` to connect. Provide your API key for authentication.
 
-## Limitations
-
-### Supported Data Types
+## Supported Data Types
 
 The following Apache Arrow / DataFusion SQL types are supported. Other types will result in a `Unable to understand the type for column` error. Please report an issue if support for additional types is required.
 
@@ -146,7 +153,10 @@ The following Apache Arrow / DataFusion SQL types are supported. Other types wil
 | Interval                                                      | INTERVAL            | Text               |
 | Struct                                                        | STRUCT              | Text               |
 
-**LargeUtf8 data type is not supported.**  
+## Limitations
+
+### LargeUtf8 Data Type Is Not Supported
+
 To work around this limitation, use [views](https://spiceai.org/docs/components/views) to manually convert `LargeUtf8` columns to `Utf8` by casting them with `::TEXT`.
 
 **Example:**
@@ -165,9 +175,7 @@ views:
 
 ### Date Time Arithmetic Operations Are Not Supported
 
-Date and time arithmetic operations, such as subtracting or adding timestamps and intervals, are not supported and will result in an error similar to `Invalid function 'timestampdiff'.\nDid you mean 'to_timestamp'? (Internal; ExecuteQuery)`. For example:
-
-```text
+Due to lack of support for the `timestampdiff` function in the [DataFusion query engine](https://datafusion.apache.org/user-guide/sql/scalar_functions.html), date and time arithmetic operations—such as subtracting or adding timestamps and intervals—are not supported and will result in an error similar to `Invalid function 'timestampdiff'.\nDid you mean 'to_timestamp'? (Internal; ExecuteQuery)`. For example:
 (parameter) =>
 let
     Sorted = Table.Sort(parameter[taxi_table], {"RecordID"}),
@@ -182,6 +190,8 @@ in
 ```text
 ADBC: InternalError [] [FlightSQL] [FlightSQL] Error during planning: Invalid function 'timestampdiff'.\nDid you mean 'to_timestamp'? (Internal; ExecuteQuery)
 ```
+
+Please report an issue if support for date or time arithmetic operations is required.
 
 ## Development
 
