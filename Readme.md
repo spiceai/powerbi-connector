@@ -27,22 +27,31 @@ The Spice.ai Power BI Connector is a [ADBC](https://github.com/apache/arrow-adbc
 1. Open Power BI Desktop.
 2. Click on `Get Data` → `More...`.
 3. In the dialog, select `Spice.ai` connector.
-4. Click `Connect`.
-5. Enter the **ADBC (Arrow Flight SQL) Endpoint**:
+
+   <img width="748" alt="Spice.ai connector" src="https://github.com/user-attachments/assets/d589cfce-25c3-4697-9a7c-e63a130acd53" />
+
+5. Click `Connect`.
+6. Enter the **ADBC (Arrow Flight SQL) Endpoint**:
     - For Spice Cloud Platform:  
       `grpc+tls://flight.spiceai.io:443`  
       *(Use the region-specific address if applicable.)*
     - For on-premises/self-hosted Spice.ai:
         - Without TLS (default): `grpc://<server-ip>:50051`
         - With TLS: `grpc+tls://<server-ip>:50051`
-6. Select the `Data Connectivity` mode:
+
+<img width="748" alt="Spice.ai Connection Dialog" src="https://github.com/user-attachments/assets/e8365aa3-68f1-4746-916c-d0a82e80a627" />
+
+7. Select the `Data Connectivity` mode:
     - **Import**: Data is loaded into Power BI, enabling extensive functionality but requiring periodic refreshes and sufficient local memory to accommodate the dataset.
     - **DirectQuery**: Queries are executed directly against Spice in real-time, providing fast performance even on large datasets by leveraging Spice's optimized query engine.
-7. Click `OK`.
-8. Select `Authentication` option:
+8. Click `OK`.
+9. Select `Authentication` option:
     - **Anonymous**: Select for unauthenticated on-premises deployments.
     - **API Key**: Your Spice.ai API key for authentication (required for Spice Cloud). Follow the [guide](https://docs.spice.ai/portal/apps/api-keys) to obtain it from the Spice Cloud portal.
-9. Click `Connect` to establish the connection.
+  
+<img width="748" alt="Spice.ai Authentication" src="https://github.com/user-attachments/assets/76c550fd-489f-474c-aa50-311371ecdf5b" />
+
+11. Click `Connect` to establish the connection.
 
 ### Creating Test Instance
 
