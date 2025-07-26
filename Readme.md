@@ -132,9 +132,7 @@ Optional: To create a test Spice instance for use with the Power BI connector, f
 1. Obtain API Key: [guide](https://docs.spice.ai/portal/apps/api-keys)
 1. Once configured, `grpc+tls://flight.spiceai.io:443` can be used as the `ADBC (Arrow Flight SQL) Endpoint` to connect. Provide your API key for authentication.
 
-## Limitations
-
-### Supported Data Types
+## Supported Data Types
 
 The following Apache Arrow / DataFusion SQL types are supported. Other types will result in a `Unable to understand the type for column` error. Please report an issue if support for additional types is required.
 
@@ -155,7 +153,10 @@ The following Apache Arrow / DataFusion SQL types are supported. Other types wil
 | Interval                                                      | INTERVAL            | Text               |
 | Struct                                                        | STRUCT              | Text               |
 
-**LargeUtf8 data type is not supported.**  
+## Limitations
+
+### LargeUtf8 Data Type Is Not Supported
+
 To work around this limitation, use [views](https://spiceai.org/docs/components/views) to manually convert `LargeUtf8` columns to `Utf8` by casting them with `::TEXT`.
 
 **Example:**
@@ -174,9 +175,7 @@ views:
 
 ### Date Time Arithmetic Operations Are Not Supported
 
-Date and time arithmetic operations, such as subtracting or adding timestamps and intervals, are not supported and will result in an error similar to `Invalid function 'timestampdiff'.\nDid you mean 'to_timestamp'? (Internal; ExecuteQuery)`. For example:
-
-```text
+Due to lack of support for the `timestampdiff` function in the [DataFusion query engine](https://datafusion.apache.org/user-guide/sql/scalar_functions.html), date and time arithmetic operations—such as subtracting or adding timestamps and intervals—are not supported and will result in an error similar to `Invalid function 'timestampdiff'.\nDid you mean 'to_timestamp'? (Internal; ExecuteQuery)`. For example:
 (parameter) =>
 let
     Sorted = Table.Sort(parameter[taxi_table], {"RecordID"}),
@@ -191,6 +190,8 @@ in
 ```text
 ADBC: InternalError [] [FlightSQL] [FlightSQL] Error during planning: Invalid function 'timestampdiff'.\nDid you mean 'to_timestamp'? (Internal; ExecuteQuery)
 ```
+
+Please report an issue if support for date or time arithmetic operations is required.
 
 ## Development
 
