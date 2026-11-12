@@ -19,7 +19,7 @@ jobs:
     name: Run Integration Tests
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.4.0
         with:
           fetch-depth: 0
 
@@ -52,7 +52,7 @@ jobs:
           make test-suite
 
       - name: Upload connector binary
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         if: always()
         with:
           name: spice_adbc.mez
