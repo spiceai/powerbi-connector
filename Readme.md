@@ -82,7 +82,7 @@ Optional: To create a test Spice instance for use with the Power BI connector, f
     name: taxi_trips
 
     datasets:
-      - from: s3://spiceai-public-datasets/pbi-power-query-test-suite/nyc_taxi_tripdata.parquet
+      - from: s3://spice-datasets-gjezag77s0hu/pbi-power-query-test-suite/nyc_taxi_tripdata.parquet
         name: taxi_trips
         acceleration: 
           enabled: true
@@ -106,7 +106,7 @@ Optional: To create a test Spice instance for use with the Power BI connector, f
     2025-07-25T17:47:49.952818Z  INFO runtime::flight: Spice Runtime Flight listening on 127.0.0.1:50051
     2025-07-25T17:47:49.954928Z  INFO runtime::init::dataset: Dataset taxi_trips initializing...
     2025-07-25T17:47:49.954685Z  INFO runtime::http: Spice Runtime HTTP listening on 127.0.0.1:8090
-    2025-07-25T17:47:50.876966Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spiceai-public-datasets/pbi-power-query-test-suite/nyc_taxi_tripdata.parquet), acceleration (arrow), results cache enabled.
+    2025-07-25T17:47:50.876966Z  INFO runtime::init::dataset: Dataset taxi_trips registered (s3://spice-datasets-gjezag77s0hu/pbi-power-query-test-suite/nyc_taxi_tripdata.parquet), acceleration (arrow), results cache enabled.
     2025-07-25T17:47:50.877953Z  INFO runtime::accelerated_table::refresh_task: Loading data for dataset taxi_trips
     2025-07-25T17:47:51.945597Z  INFO runtime::accelerated_table::refresh_task: Loaded 10,000 rows (1.35 MiB) for dataset taxi_trips in 1s 67ms.
     2025-07-25T17:47:52.034011Z  INFO runtime: All components are loaded. Spice runtime is ready!
@@ -123,7 +123,7 @@ Optional: To create a test Spice instance for use with the Power BI connector, f
     name: taxi_trips
 
     datasets:
-      - from: s3://spiceai-public-datasets/pbi-power-query-test-suite/nyc_taxi_tripdata.parquet
+      - from: s3://spice-datasets-gjezag77s0hu/pbi-power-query-test-suite/nyc_taxi_tripdata.parquet
         name: taxi_trips
         acceleration: 
           enabled: true
